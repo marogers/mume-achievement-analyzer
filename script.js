@@ -112,18 +112,56 @@ const staticAchievements = [
   "You earned Adrāgor's trust and became a valued ally of the Morgundul.",
   "You provided Dolion with evidence that the druidess, Silwiel, had become corrupted.",
   "You have taken the dark oath and succumbed to the Dark Lord.",
-];
+  "You have saved someone from certain death by tending their wounds.",
+  "You have reached the highest level that one can achieve as a mortal.",
+  "Through fortune and decisive action, you improved a herbal kit.",
+  "You have had your lockpicks upgraded.",
+]
+const dynamicAchievements = []
+
+const milking = [
+  "You have barely started learning how to milk animals.",
+  "You have some basic knowledge in milking techniques.",
+  "You have some experience in proper milking techniques.",
+  "You are a master milker and would make any farmer proud.",
+]
+const tieredAchievements = [
+  milking,
+]
+
 
 function compare() {
-  const userAchievements = document.getElementById("achievements").value.split("\n");
-  const userHas = [];
-  const missing = [];
+  const userAchievements = document.getElementById("achievements").value.split("\n")
+  const userHas = []
+  const missing = []
 
   for (const achievement of staticAchievements) {
     if (userAchievements.includes(achievement)) {
-      userHas.push(achievement);
+      userHas.push(achievement)
     } else {
-      missing.push(achievement);
+      missing.push(achievement)
+    }
+  }
+
+  for (const tieredAchievementList of tieredAchievements) {
+    let foundAchievementInTier = false
+    for (const tieredAchievement of tieredAchievementList) {
+      if (userAchievements.includes(tieredAchievement)) {
+        userHas.push(tieredAchievement)
+        foundAchievementInTier = true
+
+        // Check if still missing a higher tier in the achievement
+        // If so, push the next achievement in the list
+        if (tieredAchievementList.indexOf(tieredAchievement) < tieredAchievementList.length - 1) {
+          missing.push(tieredAchievementList[tieredAchievementList.indexOf(tieredAchievement) + 1])
+        }
+        break
+      }
+    }
+
+    // If no achievement found in the tier, add the first entry to the missing set
+    if (!foundAchievementInTier) {
+      missing.push(tieredAchievementList[0])
     }
   }
 
@@ -132,22 +170,22 @@ function compare() {
 
   let results = "";
   if (userHas.length) {
-    results += "<h2>You have achieved " + achievementFraction + ":</h2>";
+    results += "<h2>You have achieved " + achievementFraction + ":</h2>"
     for (const achievement of userHas) {
-      results += achievement + "</br>";
+      results += achievement + "</br>"
     }
   } else {
-    results += "<p>You haven't achieved any of the listed achievements.</p>";
+    results += "<p>You haven't achieved any of the listed achievements.</p>"
   }
 
   if (missing.length) {
-    results += "<h2>Missing achievements " + missingFraction + ":</h2>";
+    results += "<h2>Missing achievements " + missingFraction + ":</h2>"
     for (const achievement of missing) {
-      results += achievement + "</br>";
+      results += achievement + "</br>"
     }
   }
 
   const resultsElement = document.getElementById("results")
   resultsElement.style.display = ""
-  resultsElement.innerHTML = results;
+  resultsElement.innerHTML = results
 }
