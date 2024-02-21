@@ -95,7 +95,7 @@ const staticAchievements = [
   "You contributed the Seeing Stone of Amon-Sul to the library of Azra-Zaira.",
   "You helped Niuldor the botanist to prepare a cure disease potion.",
   "You assisted Beorn in defeating the warg riders of Anduin Vale.",
-  "You fixed the old hobbit mill on the hillside near Honburg. (Honburg Mill)
+  "You fixed the old hobbit mill on the hillside near Honburg.",
   "You have brought black powder to the Old Hag of Ingrove, and for whatever reason received a love potion as the payment.",
   "You brought a sacrificial goblet to the Nśmenórean sorcerer Nagash.",
   "You slew the spider Frychra in her lair, deep in the forest of Mirkwood.",
