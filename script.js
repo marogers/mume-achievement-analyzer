@@ -127,22 +127,27 @@ function compare() {
     }
   }
 
+  const achievementFraction = "(" + userHas.length + "/" + staticAchievements.length + ")"
+  const missingFraction = "(" + missing.length + "/" + staticAchievements.length + ")"
+
   let results = "";
   if (userHas.length) {
-    results += "<h2>You have achieved:</h2>";
+    results += "<h2>You have achieved " + achievementFraction + ":</h2>";
     for (const achievement of userHas) {
-      results += "<p>" + achievement + "</p>";
+      results += achievement + "</br>";
     }
   } else {
     results += "<p>You haven't achieved any of the listed achievements.</p>";
   }
 
   if (missing.length) {
-    results += "<h2>Missing achievements:</h2>";
+    results += "<h2>Missing achievements " + missingFraction + ":</h2>";
     for (const achievement of missing) {
-      results += "<p>" + achievement + "</p>";
+      results += achievement + "</br>";
     }
   }
 
-  document.getElementById("results").innerHTML = results;
+  const results = document.getElementById("results")
+  results.style.display = ""
+  results.innerHTML = results;
 }
