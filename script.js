@@ -85,7 +85,7 @@ const staticAchievements = [
   "You have been granted an annual entrance to Lorien.",
   "You brought an orkish bow to Taurion, who put the soul of the dead tree to rest.",
   "You have been drawn into the dark haze of Galadriel's mirror. There, you fought your way through the forest area and battled the undead in the Citadel's keep.",
-  "You helped the Coubhel solve the mystery of the man sneaking around Lórien's borders."
+  "You helped the Coubhel solve the mystery of the man sneaking around Lórien's borders.",
   "You assisted Offa the scout in dispatching the Lórien elf who was stalking him.",
   "You gave X items from the enemy to Lazrria that were found in the vicinity.", // fix
   "You avenged the death of Narv the Beorning's wife and returned her ring to him.",
