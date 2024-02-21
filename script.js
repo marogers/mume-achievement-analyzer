@@ -147,7 +147,7 @@ function compare() {
     }
   }
 
-  const results = document.getElementById("results")
-  results.style.display = ""
-  results.innerHTML = results;
+  const resultsElement = document.getElementById("results")
+  resultsElement.style.display = ""
+  resultsElement.innerHTML = results;
 }
