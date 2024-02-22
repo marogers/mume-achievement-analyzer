@@ -119,14 +119,43 @@ const staticAchievements = [
 ]
 const dynamicAchievements = []
 
+const herblore = [
+  "You have started learning about mixing potions.",
+  "You have some knowledge in making potions.",
+  "You are experienced in mixing herbs into potions.",
+  "You are very experienced in mixing potions.",
+  "You are a master potionmaker.",
+]
+const casserole = [
+  "You have tried cooking with a casserole.",
+  "You are somewhat experienced with cooking with a casserole.",
+]
+const harp = [
+  "Whatever you do with the harp, it has nothing to do with music.",
+  "You are able to play slow and easy melodies on the harp.",
+  "Advanced melodies flow from the harp when you play it.",
+  "When you play the harp, Arda is filled with unearthly beautiful music.",
+]
 const milking = [
   "You have barely started learning how to milk animals.",
   "You have some basic knowledge in milking techniques.",
   "You have some experience in proper milking techniques.",
   "You are a master milker and would make any farmer proud.",
 ]
+const levels = [
+  "You are a novice of little ability or renown.",
+  "You have become a champion, known for conquering many obstacles.",
+  "Your fame is growing, and you are now a hero with access to a title.",
+  "You became legendary among your kind, renowned for your deeds.",
+  "You became a Maia, known as a board reader.",
+  "You became a Maia who described a zone.",
+]
 const tieredAchievements = [
+  herblore,
+  casserole,
+  harp,
   milking,
+  levels,
 ]
 
 
