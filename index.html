@@ -10,12 +10,27 @@
   <h1>MUME Achievement Analyzer</h1>
   <p>Enter your achievements, one per line:</p>
   <textarea id="achievements" rows="10"></textarea>
-  <button onclick="compare()">Compare</button>
+  <div>
+    <label for="race-selector">Select your race:</label>
+    <select id="race-selector">
+      <option value="elf">Elf</option>
+      <option value="dwarf">Dwarf</option>
+      <option value="half-elf">Half-Elf</option>
+      <option value="hobbit">Hobbit</option>
+      <option value="man">Man</option>
+      <option value="bn">Black Numenorean</option>
+      <option value="morruhk">Morruhk</option>
+      <option value="tarkhnarb">Tarkhnarb</option>
+      <option value="troll">Troll</option>
+      <option value="zaugurz">Zaugurz</option>
+    </select>
+    <button onclick="compare()">Compare</button>
+  </div>
   <div id="results" style="display:none;"></div>
   </br>
   <small>Achievement list from: https://mumewiki.kalka.org/mumeachievements?s[]=achievements</small>
   </br>
-  <small>version 7</small>
+  <small>version 8</small>
   <script src="script.js"></script>
 </body>
 </html>
