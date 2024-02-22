@@ -116,6 +116,11 @@ const staticAchievements = [
   "You have reached the highest level that one can achieve as a mortal.",
   "Through fortune and decisive action, you improved a herbal kit.",
   "You have had your lockpicks upgraded.",
+  "You have visited all of the known world!",
+  "You called mighty creatures to fly you long distances at great speed.",
+  "You have swum around under water.",
+  "You entered an underground passageway, gashed with marks from a huge shovel.",
+  "You entered a hastily hollowed-out burrow that was carved from a hillside.",
 ]
 const dynamicAchievements = []
 
@@ -130,6 +135,13 @@ const towers = [
   "defended the camp along the Ancient Broken Road",
   "defended the Lórien Outpost on the bank of the River Anduin",
   "defended the old fortress in the Anduin Vale",
+]
+
+const travel = [
+  "You went between Fornost and Tharbad",
+  "You went between the Grey Havens and Rivendell",
+  "You walked between Goblin Town and Moria",
+  "You went between the Troll Warrens and the Morgundul Encampment",
 ]
 
 const herblore = [
@@ -163,6 +175,12 @@ const levels = [
   "You became a Maia, known as a board reader.",
   "You became a Maia who described a zone.",
 ]
+const mining = [ // TODO
+  "You have mined for the first time!",
+  "You have some basic knowledge in the mining lore of your forefathers.",
+  "You are an expert miner. Any dwarf would be proud to call you friend.",  // (Dwarves)
+  "You are an expert miner.",                                               // (Everyone, but dwarves)
+]
 const tieredAchievements = [
   herblore,
   casserole,
@@ -176,6 +194,10 @@ function compare() {
   const userAchievements = document.getElementById("achievements").value.split("\n")
   const userHas = []
   const missing = []
+  const totalAchievements = staticAchievements.length
+    + tieredAchievements.length
+    + towers.length
+    + 1 // Blackjack
 
   for (const achievement of staticAchievements) {
     if (userAchievements.includes(achievement)) {
@@ -187,6 +209,7 @@ function compare() {
 
   const hasTowers = []
   const hasBlackjack = false
+  const hasTravel = []
   for (const userAchievement of userAchievements) {
     // Blackjack
     if (userAchievement.includes("blackjack hands")) {
@@ -202,8 +225,18 @@ function compare() {
         break
       }
     }
+
+    // Travel
+    for (const route of travel) {
+      if (userAchievement.includes(route)) {
+        userHas.push(userAchievement)
+        hasTravel.push(route)
+        break
+      }
+    }
   }
 
+  // Conditionally add blackjack to missing array
   if (!hasBlackjack) {
     missing.push("Play blackjack.")
   }
@@ -212,6 +245,13 @@ function compare() {
   for (const tower of towers) {
     if (!hasTowers.includes(tower)) {
       missing.push(tower.charAt(0).toUpperCase() + tower.slice(1) + ".")
+    }
+  }
+
+  // Add missing travel routes
+  for (const route of travel) {
+    if (!hasTravel.includes(route)) {
+      missing.push(route + ".")
     }
   }
 
@@ -238,10 +278,10 @@ function compare() {
     }
   }
 
-  const achievementFraction = "(" + userHas.length + "/" + staticAchievements.length + ")"
-  const missingFraction = "(" + missing.length + "/" + staticAchievements.length + ")"
+  const achievementFraction = "(" + userHas.length + "/" + totalAchievements + ")"
+  const missingFraction = "(" + missing.length + "/" + totalAchievements + ")"
 
-  let results = "";
+  let results = ""
   if (userHas.length) {
     results += "<h2>You have achieved " + achievementFraction + ":</h2>"
     for (const achievement of userHas) {
