@@ -136,49 +136,49 @@ const towers = [
   "defended the Lórien Outpost on the bank of the River Anduin",
   "defended the old fortress in the Anduin Vale",
 ]
-[
-  {
-    "desc": "defended the Dunland Outpost",
-    "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
-  },
-  {
-    "desc": "defended the fortress at the Last Bridge",
-    "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
-  },
-  {
-    "desc": "defended the Dark Tower in the Misty Mountains",
-    "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
-  },
-  {
-    "desc": "defended the Tower on the Ancient Broken Road",
-    "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz'],
-    "achieveable": false,
-  },
-  {
-    "desc": "defended the tower above the troll warrens",
-    "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
-  },
-  {
-    "desc": "defended the Hidden Outpost near the Ford of Bruinen",
-    "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
-  },
-  {
-    "desc": "defended the outpost in the Vale of Anduin",
-    "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
-  },
-  {
-    "desc": "defended the camp along the Ancient Broken Road",
-    "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
-  },
-  {
-    "desc": "defended the Lórien Outpost on the bank of the River Anduin",
-    "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
-  },
-  {
-    "desc": "defended the old fortress in the Anduin Vale",
-    "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
-  }
-]
+// [
+//   {
+//     "desc": "defended the Dunland Outpost",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "defended the fortress at the Last Bridge",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "defended the Dark Tower in the Misty Mountains",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "defended the Tower on the Ancient Broken Road",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz'],
+//     "achieveable": false,
+//   },
+//   {
+//     "desc": "defended the tower above the troll warrens",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "defended the Hidden Outpost near the Ford of Bruinen",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "defended the outpost in the Vale of Anduin",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "defended the camp along the Ancient Broken Road",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "defended the Lórien Outpost on the bank of the River Anduin",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "defended the old fortress in the Anduin Vale",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   }
+// ]
 
 const travel = [
   "You went between Fornost and Tharbad",
@@ -211,7 +211,7 @@ const herblore = [
   "You are experienced in mixing herbs into potions.",
   "You are very experienced in mixing potions.",
   "You are a master potionmaker.",
-// ]
+]
 // [
 //   {
 //     "desc": "You have started learning about mixing potions.",
