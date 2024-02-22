@@ -143,6 +143,24 @@ const travel = [
   "You walked between Goblin Town and Moria",
   "You went between the Troll Warrens and the Morgundul Encampment",
 ]
+// [
+//   {
+//     "desc": "You went between Fornost and Tharbad",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man']
+//   },
+//   {
+//     "desc": "You went between the Grey Havens and Rivendell",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man']
+//   },
+//   {
+//     "desc": "You walked between Goblin Town and Moria",
+//     "races": ['bn', 'morruhk', 'tarkhnarb', 'troll']
+//   },
+//   {
+//     "desc": "You went between the Troll Warrens and the Morgundul Encampment",
+//     "races": ['bn', 'morruhk', 'tarkhnarb', 'troll']
+//   }
+// ]
 
 const herblore = [
   "You have started learning about mixing potions.",
