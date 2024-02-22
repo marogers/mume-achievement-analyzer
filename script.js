@@ -185,9 +185,16 @@ function compare() {
     }
   }
 
-  // Towers / Conquerer
   const hasTowers = []
+  const hasBlackjack = false
   for (const userAchievement of userAchievements) {
+    // Blackjack
+    if (userAchievement.includes("blackjack hands") {
+      userHas.push(userAchievement)
+      hasBlackjack = true
+    }
+    
+    // Towers / Conquerer
     for (const tower of towers) {
       if (userAchievement.includes(tower)) {
         userHas.push(userAchievement)
@@ -195,6 +202,10 @@ function compare() {
         break
       }
     }
+  }
+
+  if (!hasBlackjack) {
+    missing.push("Play blackjack.")
   }
 
   // Add missing towers
