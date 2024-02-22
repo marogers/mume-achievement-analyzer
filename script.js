@@ -200,7 +200,7 @@ function compare() {
   // Add missing towers
   for (const tower of towers) {
     if (!hasTowers.includes(tower)) {
-      missing.push(tower)
+      missing.push(tower.charAt(0).toUpperCase() + tower.slice(1) + ".")
     }
   }
 
