@@ -189,7 +189,7 @@ function compare() {
   const hasBlackjack = false
   for (const userAchievement of userAchievements) {
     // Blackjack
-    if (userAchievement.includes("blackjack hands") {
+    if (userAchievement.includes("blackjack hands")) {
       userHas.push(userAchievement)
       hasBlackjack = true
     }
