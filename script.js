@@ -119,6 +119,19 @@ const staticAchievements = [
 ]
 const dynamicAchievements = []
 
+const towers = [
+  "defended the Dunland Outpost",
+  "defended the fortress at the Last Bridge",
+  "defended the Dark Tower in the Misty Mountains",
+  "defended the Tower on the Ancient Broken Road",
+  "defended the tower above the troll warrens",
+  "defended the Hidden Outpost near the Ford of Bruinen",
+  "defended the outpost in the Vale of Anduin",
+  "defended the camp along the Ancient Broken Road",
+  "defended the Lórien Outpost on the bank of the River Anduin",
+  "defended the old fortress in the Anduin Vale",
+]
+
 const herblore = [
   "You have started learning about mixing potions.",
   "You have some knowledge in making potions.",
@@ -172,6 +185,26 @@ function compare() {
     }
   }
 
+  // Towers / Conquerer
+  const hasTowers = []
+  for (const userAchievement of userAchievements) {
+    for (const tower of towers) {
+      if (userAchievement.includes(tower)) {
+        userHas.push(userAchievement)
+        hasTowers.push(tower)
+        break
+      }
+    }
+  }
+
+  // Add missing towers
+  for (const tower of towers) {
+    if (!hasTowers.includes(tower)) {
+      missing.push(tower)
+    }
+  }
+
+  // Achievements with multiple levels
   for (const tieredAchievementList of tieredAchievements) {
     let foundAchievementInTier = false
     for (const tieredAchievement of tieredAchievementList) {
