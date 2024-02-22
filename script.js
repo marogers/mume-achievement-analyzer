@@ -238,7 +238,7 @@ function compare() {
 
   // Conditionally add blackjack to missing array
   if (!hasBlackjack) {
-    missing.push("Play blackjack.")
+    missing.push("Played blackjack.")
   }
 
   // Add missing towers
