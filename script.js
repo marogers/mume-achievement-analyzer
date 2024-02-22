@@ -32,7 +32,7 @@ const staticAchievements = [
   "You found the lost daughter of a Shire shopkeeper and brought her home safely.",
   "You have escorted Harle all the way from the Shire to the depths of Fangorn, to bring the evidence about the entwives to Treebeard.",
   "You battled the great black wolves during the fell winter.",
-  "You helped the old tanner of the Woody End create four varieties of leather for a total of four pieces.",
+  "You helped the old tanner of the Woody End create four varieties of leather for a total of four pieces.", // **********fix
   "You slew a festive hobbit in the Shire and cancelled his party.",
   "You helped the plump hobbit female learn how to bake dumplings!",
   "You have discovered a buried treasure.",
@@ -87,7 +87,7 @@ const staticAchievements = [
   "You have been drawn into the dark haze of Galadriel's mirror. There, you fought your way through the forest area and battled the undead in the Citadel's keep.",
   "You helped the Coubhel solve the mystery of the man sneaking around Lórien's borders.",
   "You assisted Offa the scout in dispatching the Lórien elf who was stalking him.",
-  "You gave X items from the enemy to Lazrria that were found in the vicinity.", // fix
+  "You gave X items from the enemy to Lazrria that were found in the vicinity.", // **********fix
   "You avenged the death of Narv the Beorning's wife and returned her ring to him.",
   "You recovered Buttercup, the favourite cow of Beorning farmer Ocher.",
   "You retrieved the dagger lost by one of Elrond's scouts in a goblin attack near the Anduin.",
@@ -136,6 +136,49 @@ const towers = [
   "defended the Lórien Outpost on the bank of the River Anduin",
   "defended the old fortress in the Anduin Vale",
 ]
+[
+  {
+    "desc": "defended the Dunland Outpost",
+    "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+  },
+  {
+    "desc": "defended the fortress at the Last Bridge",
+    "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+  },
+  {
+    "desc": "defended the Dark Tower in the Misty Mountains",
+    "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+  },
+  {
+    "desc": "defended the Tower on the Ancient Broken Road",
+    "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz'],
+    "achieveable": false,
+  },
+  {
+    "desc": "defended the tower above the troll warrens",
+    "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+  },
+  {
+    "desc": "defended the Hidden Outpost near the Ford of Bruinen",
+    "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+  },
+  {
+    "desc": "defended the outpost in the Vale of Anduin",
+    "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+  },
+  {
+    "desc": "defended the camp along the Ancient Broken Road",
+    "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+  },
+  {
+    "desc": "defended the Lórien Outpost on the bank of the River Anduin",
+    "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+  },
+  {
+    "desc": "defended the old fortress in the Anduin Vale",
+    "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+  }
+]
 
 const travel = [
   "You went between Fornost and Tharbad",
@@ -168,23 +211,91 @@ const herblore = [
   "You are experienced in mixing herbs into potions.",
   "You are very experienced in mixing potions.",
   "You are a master potionmaker.",
-]
+// ]
+// [
+//   {
+//     "desc": "You have started learning about mixing potions.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "You have some knowledge in making potions.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "You are experienced in mixing herbs into potions.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "You are very experienced in mixing potions.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "You are a master potionmaker.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   }
+// ]
 const casserole = [
   "You have tried cooking with a casserole.",
   "You are somewhat experienced with cooking with a casserole.",
 ]
+// [
+//   {
+//     "desc": "You have tried cooking with a casserole.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "You are somewhat experienced with cooking with a casserole.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   }
+// ]
 const harp = [
   "Whatever you do with the harp, it has nothing to do with music.",
   "You are able to play slow and easy melodies on the harp.",
   "Advanced melodies flow from the harp when you play it.",
   "When you play the harp, Arda is filled with unearthly beautiful music.",
 ]
+// [
+//   {
+//     "desc": "Whatever you do with the harp, it has nothing to do with music.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man']
+//   },
+//   {
+//     "desc": "You are able to play slow and easy melodies on the harp.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man']
+//   },
+//   {
+//     "desc": "Advanced melodies flow from the harp when you play it.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man']
+//   },
+//   {
+//     "desc": "When you play the harp, Arda is filled with unearthly beautiful music.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man']
+//   }
+// ]
 const milking = [
   "You have barely started learning how to milk animals.",
   "You have some basic knowledge in milking techniques.",
   "You have some experience in proper milking techniques.",
   "You are a master milker and would make any farmer proud.",
 ]
+// [
+//   {
+//     "desc": "You have barely started learning how to milk animals.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "You have some basic knowledge in milking techniques.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "You have some experience in proper milking techniques.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "You are a master milker and would make any farmer proud.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   }
+// ]
 const levels = [
   "You are a novice of little ability or renown.",
   "You have become a champion, known for conquering many obstacles.",
@@ -193,12 +304,56 @@ const levels = [
   "You became a Maia, known as a board reader.",
   "You became a Maia who described a zone.",
 ]
+// [
+//   {
+//     "desc": "You are a novice of little ability or renown.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "You have become a champion, known for conquering many obstacles.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "Your fame is growing, and you are now a hero with access to a title.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "You became legendary among your kind, renowned for your deeds.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "You became a Maia, known as a board reader.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man']
+//   },
+//   {
+//     "desc": "You became a Maia who described a zone.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man']
+//   }
+// ]
 const mining = [ // TODO
   "You have mined for the first time!",
   "You have some basic knowledge in the mining lore of your forefathers.",
   "You are an expert miner. Any dwarf would be proud to call you friend.",  // (Dwarves)
   "You are an expert miner.",                                               // (Everyone, but dwarves)
 ]
+// [
+//   {
+//     "desc": "You have mined for the first time!",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "You have some basic knowledge in the mining lore of your forefathers.",
+//     "races": ['elf', 'dwarf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   },
+//   {
+//     "desc": "You are an expert miner. Any dwarf would be proud to call you friend.",
+//     "races": ['Dwarf']
+//   },
+//   {
+//     "desc": "You are an expert miner.",
+//     "races": ['elf', 'half-elf', 'hobbit', 'man', 'bn', 'morruhk', 'tarkhnarb', 'troll', 'zaugurz']
+//   }
+// ]
 const tieredAchievements = [
   herblore,
   casserole,
