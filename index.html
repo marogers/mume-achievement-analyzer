@@ -1,36 +1,1474 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MUME Achievement Analyzer</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Achievement Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+
+        .input-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .output-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 200px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #4CAF50;
+            transition: width 0.3s ease;
+        }
+
+        .category {
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .category-header {
+            background-color: #f8f8f8;
+            padding: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-content {
+            padding: 10px;
+            display: none;
+        }
+
+        .achievement {
+            padding: 8px;
+            margin: 4px 0;
+            border-radius: 4px;
+            background-color: #f8f8f8;
+        }
+
+        .achievement.completed {
+            background-color: #e8f5e9;
+        }
+
+        .counter {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1>MUME Achievement Analyzer</h1>
-  <p>Enter your achievements, one per line:</p>
-  <textarea id="achievements" rows="10"></textarea>
-  <div>
-    <label for="race-selector">Select your race:</label>
-    <select id="race-selector">
-      <option value="elf">Elf</option>
-      <option value="dwarf">Dwarf</option>
-      <option value="half-elf">Half-Elf</option>
-      <option value="hobbit">Hobbit</option>
-      <option value="man">Man</option>
-      <option value="bn">Black Numenorean</option>
-      <option value="morruhk">Morruhk</option>
-      <option value="tarkhnarb">Tarkhnarb</option>
-      <option value="troll">Troll</option>
-      <option value="zaugurz">Zaugurz</option>
-    </select>
-    <button onclick="compare()">Compare</button>
-  </div>
-  <div id="results" style="display:none;"></div>
-  </br>
-  <small>Achievement list from: https://mumewiki.kalka.org/mumeachievements?s[]=achievements</small>
-  </br>
-  <small>version 8</small>
-  <script src="script.js"></script>
+    <h1>Achievement Tracker</h1>
+    <div class="container">
+        <div class="input-section">
+            <div class="form-group">
+                <label for="race">Race:</label>
+                <select id="race">
+                    <option value="">Select a race</option>
+                    <option value="Man">Man</option>
+                    <option value="Elf">Elf</option>
+                    <option value="Hobbit">Hobbit</option>
+                    <option value="Half-elf">Half-elf</option>
+                    <option value="Dwarf">Dwarf</option>
+                    <option value="Tarkhnarb Orc (Torc)">Orc (Tarkhnarb or Morruhk)</option>
+                    <option value="Zaugurz Orc (zorc)">Orc (Zaugurz)</option>
+                    <option value="Troll">Troll</option>
+                    <option value="Black Numenorean (BN)">Black Numenorean</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="achievements">Paste your achievements here:</label>
+                <textarea id="achievements" placeholder="Paste your achievements here..."></textarea>
+            </div>
+            <button id="parseButton" disabled>Parse Achievements</button>
+        </div>
+        <div class="output-section">
+            <div id="overallProgress">
+                <h2>Overall Progress</h2>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+                <p id="progressText">0/0 achievements</p>
+            </div>
+            <div id="categories"></div>
+        </div>
+    </div>
+
+    <script>
+        // Achievement data structure
+        const achievements = [
+            // Combat
+            {
+                id: 'combat-never-melee',
+                text: 'You have never been in melee.',
+                category: 'Combat',
+                races: ['Man', 'Elf', 'Hobbit', 'Half-elf', 'Dwarf', 'Tarkhnarb Orc (Torc)', 'Zaugurz Orc (zorc)', 'Troll', 'Black Numenorean (BN)']
+            },
+            {
+                id: 'combat-never-hit',
+                text: 'You have never hit anyone with a weapon.',
+                category: 'Combat',
+                races: ['Man', 'Elf', 'Hobbit', 'Half-elf', 'Dwarf', 'Tarkhnarb Orc (Torc)', 'Zaugurz Orc (zorc)', 'Troll', 'Black Numenorean (BN)']
+            },
+
+            // Spellcasting
+            {
+                id: 'spell-never-cast',
+                text: 'You have never cast any spells.',
+                category: 'Spellcasting',
+                races: ['Man', 'Elf', 'Hobbit', 'Half-elf', 'Dwarf', 'Tarkhnarb Orc (Torc)', 'Troll', 'Black Numenorean (BN)']
+            },
+            {
+                id: 'spell-only-helpful',
+                text: 'You have only cast helpful spells.',
+                category: 'Spellcasting',
+                races: ['Man', 'Elf', 'Hobbit', 'Half-elf', 'Dwarf', 'Tarkhnarb Orc (Torc)', 'Troll', 'Black Numenorean (BN)']
+            },
+            
+            // Swimming
+            // TODO: Is this actually a sequence? Is it the correct sequence?
+            {
+                id: 'travel-swimming-basic',
+                text: 'You have swum under water.',
+                category: 'Swimming',
+                sequence: 1
+            },
+            {
+                id: 'travel-swimming-experienced',
+                text: 'You have swum around under water.',
+                category: 'Swimming',
+                sequence: 2,
+            },
+            {
+                id: 'travel-swimming-master',
+                text: 'You have swum far under water.',
+                category: 'Swimming',
+                sequence: 3,
+            },
+            
+
+            // Herblores
+            {
+                id: 'herblore-started',
+                text: 'You have started learning about mixing potions.',
+                category: 'Herblores',
+                sequence: 1
+            },
+            {
+                id: 'herblore-some',
+                text: 'You have some knowledge in making potions.',
+                category: 'Herblores',
+                sequence: 2
+            },
+            {
+                id: 'herblore-experienced',
+                text: 'You are experienced in mixing herbs into potions.',
+                category: 'Herblores',
+                sequence: 3
+            },
+            {
+                id: 'herblore-very-experienced',
+                text: 'You are very experienced in mixing potions.',
+                category: 'Herblores',
+                sequence: 4
+            },
+            {
+                id: 'herblore-master',
+                text: 'You are a master potionmaker.',
+                category: 'Herblores',
+                sequence: 5
+            },
+
+            // Casserole
+            {
+                id: 'casserole-tried',
+                text: 'You have tried cooking with a casserole.',
+                category: 'Casserole',
+                sequence: 1,
+            },
+            {
+                id: 'casserole-experienced',
+                text: 'You are somewhat experienced with cooking with a casserole.',
+                category: 'Casserole',
+                sequence: 2,
+            },
+
+            // Mining
+            {
+                id: 'mining-first',
+                text: 'You have mined for the first time!',
+                category: 'Mining',
+                sequence: 1,
+            },
+            {
+                id: 'mining-basic',
+                text: 'You have some basic knowledge in the mining lore of your forefathers.',
+                category: 'Mining',
+                sequence: 2,
+            },
+            {
+                id: 'mining-expert-dwarf',
+                text: 'You are an expert miner. Any dwarf would be proud to call you friend.',
+                category: 'Mining',
+                races: ['Dwarf'],
+                sequence: 3,
+            },
+            {
+                id: 'mining-expert-other',
+                text: 'You are an expert miner.',
+                category: 'Mining',
+                races: ['Man', 'Elf', 'Hobbit', 'Half-elf', 'Tarkhnarb Orc (Torc)', 'Zaugurz Orc (zorc)', 'Troll', 'Black Numenorean (BN)'],
+                sequence: 3,
+            },
+
+            // Blackjack
+            // TODO: Figure out what to do with these
+            {
+                id: 'blackjack-small-win',
+                text: 'You have won two lauren and four celeb on four blackjack hands, having bet only two lauren and one celeb.',
+                category: 'Blackjack'
+            },
+            {
+                id: 'blackjack-medium-win',
+                text: 'You have gambled eight gold on eight blackjack hands, and have won it all back.',
+                category: 'Blackjack'
+            },
+            {
+                id: 'blackjack-large-win',
+                text: 'You have gambled 12 gold on twelve blackjack hands, but at least won ten gold of it back.',
+                category: 'Blackjack'
+            },
+
+            // Harp
+            {
+                id: 'harp-basic',
+                text: 'Whatever you do with the harp, it has nothing to do with music.',
+                category: 'Harp',
+                sequence: 1
+            },
+            {
+                id: 'harp-slow',
+                text: 'You are able to play slow and easy melodies on the harp.',
+                category: 'Harp',
+                sequence: 2
+            },
+            {
+                id: 'harp-advanced',
+                text: 'Advanced melodies flow from the harp when you play it.',
+                category: 'Harp',
+                sequence: 3
+            },
+            {
+                id: 'harp-master',
+                text: 'When you play the harp, Arda is filled with unearthly beautiful music.',
+                category: 'Harp',
+                sequence: 4
+            },
+
+            // Milking
+            {
+                id: 'milking-basic',
+                text: 'You have barely started learning how to milk animals.',
+                category: 'Milking',
+                sequence: 1
+            },
+            {
+                id: 'milking-some',
+                text: 'You have some basic knowledge in milking techniques.',
+                category: 'Milking',
+                sequence: 2
+            },
+            {
+                id: 'milking-experienced',
+                text: 'You have some experience in proper milking techniques.',
+                category: 'Milking',
+                sequence: 3
+            },
+            {
+                id: 'milking-master',
+                text: 'You are a master milker and would make any farmer proud.',
+                category: 'Milking',
+                sequence: 4
+            },
+
+            // Citizen
+            // TODO: Should these be separate
+            {
+                id: 'citizen-all',
+                text: 'You are a citizen of all the Free People\'s towns.',
+                category: 'Citizen',
+                races: ['Man', 'Elf', 'Hobbit', 'Half-elf', 'Dwarf']
+            },
+            {
+                id: 'citizen-was-all',
+                text: 'You have been a citizen of all the Free People\'s towns.',
+                category: 'Citizen',
+                races: ['Man', 'Elf', 'Hobbit', 'Half-elf', 'Dwarf']
+            },
+
+            // Levels
+            {
+                id: 'level-novice',
+                text: 'You are a novice of little ability or renown.',
+                category: 'Levels',
+                sequence: 1,
+            },
+            {
+                id: 'level-champion',
+                text: 'You have become a champion, known for conquering many obstacles.',
+                category: 'Levels',
+                sequence: 2,
+            },
+            {
+                id: 'level-hero',
+                text: 'Your fame is growing, and you are now a hero with access to a title.',
+                category: 'Levels',
+                sequence: 3,
+            },
+            {
+                id: 'level-legendary',
+                text: 'You have become legendary among your kind, renowned for your deeds.',
+                category: 'Levels',
+                sequence: 4,
+            },
+            {
+                id: 'level-maia',
+                text: 'You became a Maia, known as a board reader.',
+                category: 'Levels',
+                sequence: 5,
+            },
+            {
+                id: 'level-maia-cartographer',
+                text: 'You became a Maia, Mc', // TODO: get text
+                category: 'Levels',
+                sequence: 6,
+            },
+            {
+                id: 'level-maia-builder',
+                text: 'You became a Maia, Mb', // TODO: get text
+                category: 'Levels',
+                sequence: 7,
+            },
+            {
+                id: 'level-maia-wright',
+                text: 'You became a Maia who finished a zone.',
+                category: 'Levels',
+                sequence: 8,
+            },
+            {
+                id: 'level-maia-shaper',
+                text: 'You became a Maia, Ms', // TODO: get text
+                category: 'Levels',
+                sequence: 9,
+            },
+            
+
+            // Troll Burrowing
+            {
+                // TODO: Is this for every race?
+                id: 'troll-burrowing-basic',
+                text: 'You entered a hastily hollowed-out burrow that was carved from a hillside.',
+                category: 'Troll Burrowing',
+                races: ['Troll'],
+            },
+            {
+                id: 'troll-burrowing-experienced',
+                text: '??????',
+                category: 'Troll Burrowing',
+                races: ['Troll'],
+            },
+            {
+                id: 'troll-burrowing-master',
+                text: 'You mastered the fine art of burrowing from a grimy hill troll.',
+                category: 'Troll Burrowing',
+                races: ['Troll'],
+            },
+
+            // Miscellaneous
+            {
+                id: 'misc-never-mount',
+                text: 'You have never ridden any mount.',
+                category: 'Miscellaneous',
+                races: ['Man', 'Elf', 'Hobbit', 'Half-elf', 'Dwarf', 'Tarkhnarb Orc (Torc)', 'Black Numenorean (BN)']
+            },
+            {
+                id: 'misc-never-yellow-eye',
+                text: 'You have never looked upon the Evil Yellow Eye.',
+                category: 'Miscellaneous',
+                races: ['Troll']
+            },
+            {
+                id: 'misc-never-dark-lord',
+                text: 'You have never laid down your life in the service of the Dark Lord.',
+                category: 'Miscellaneous',
+                races: ['Troll', 'Black Numenorean (BN)']
+            },
+            {
+                id: 'misc-never-animal-food',
+                text: 'You have never eaten food from animals.',
+                category: 'Miscellaneous'
+            },
+            {
+                id: 'misc-never-mandos',
+                text: 'You have never visited the Halls of Mandos.',
+                category: 'Miscellaneous'
+            },
+            {
+                id: 'misc-morruhk-mark',
+                text: 'You gained the Morruhk tribal mark of the soldier.',
+                category: 'Miscellaneous',
+                races: ['Tarkhnarb Orc (Torc)']
+            },
+            {
+                id: 'misc-lockpicks-upgrade',
+                text: 'You have had your lockpicks upgraded.',
+                category: 'Miscellaneous'
+            },
+            {
+                id: 'misc-herbal-kit-upgrade',
+                text: 'Through fortune and decisive action, you improved a herbal kit.',
+                category: 'Miscellaneous'
+            },
+            {
+                id: 'misc-highest-level',
+                text: 'You have reached the highest level that one can achieve as a mortal.',
+                category: 'Miscellaneous'
+            },
+            {
+                id: 'misc-past-life',
+                text: 'In a past life, you achieved level X before turning to stone.',
+                category: 'Miscellaneous',
+                isCounter: true,
+                races: ['Troll'],
+            },
+            {
+                id: 'misc-sundeath',
+                text: 'You have surpassed your previous sundeath of level X.',
+                category: 'Miscellaneous',
+                isCounter: true,
+                races: ['Troll'],
+            },
+            {
+                id: 'misc-languages',
+                displayText: 'You know X languages and are fluent in X.',
+                text: 'languages and are fluent in',
+                category: 'Miscellaneous',
+                partialMatch: true,
+            },
+            {
+                id: 'misc-palantir',
+                text: 'You have looked in the palantir of Amon Sūl.',
+                category: 'Miscellaneous'
+            },
+            {
+                id: 'misc-save-life',
+                text: 'You have saved someone from certain death by tending their wounds.',
+                category: 'Miscellaneous'
+            },
+            {
+                id: 'misc-epithet',
+                text: 'You have selected an epithet.',
+                category: 'Miscellaneous',
+            },
+
+            // Travelling
+            {
+                id: 'travel-undying-lands',
+                text: 'You have sailed the Straight Road and set foot on the Undying Lands.',
+                category: 'Travelling',
+                races: ['Man', 'Elf', 'Hobbit', 'Half-elf', 'Dwarf']
+            },
+            {
+                id: 'travel-fornost-tharbad',
+                displayText: 'You went between Fornost and Tharbad in X hour and X minutes.',
+                text: 'between Fornost and Tharbad',
+                category: 'Travelling',
+                races: ['Man', 'Elf', 'Hobbit', 'Half-elf', 'Dwarf'],
+                partialMatch: true
+            },
+            {
+                id: 'travel-grey-havens-rivendell',
+                displayText: 'You went between the Grey Havens and Rivendell in X hours and X minutes.',
+                text: 'between the Grey Havens and Rivendell',
+                category: 'Travelling',
+                races: ['Man', 'Elf', 'Hobbit', 'Half-elf', 'Dwarf'],
+                partialMatch: true
+            },
+            {
+                id: 'travel-goblin-moria',
+                displayText: 'You walked between Goblin Town and Moria in X hours and X minutes.',
+                text: 'between Goblin Town and Moria',
+                category: 'Travelling',
+                races: ['Black Numenorean (BN)', 'Troll', 'Tarkhnarb Orc (Torc)'],
+                partialMatch: true
+            },
+            {
+                id: 'travel-troll-morgundul',
+                displayText: 'You went between the Troll Warrens and the Morgundul Encampment in X hours, and X minutes.',
+                text: 'between the Troll Warrens and the Morgundul Encampment',
+                category: 'Travelling',
+                races: ['Black Numenorean (BN)', 'Troll', 'Tarkhnarb Orc (Torc)'],
+                partialMatch: true
+            },
+            {
+                id: 'travel-all-world',
+                text: 'You have visited all of the known world!',
+                category: 'Travelling'
+            },
+            {
+                id: 'travel-flying',
+                text: 'You called mighty creatures to fly you long distances at great speed.',
+                category: 'Travelling'
+            },
+            {
+                id: 'travel-underground',
+                text: 'You entered an underground passageway, gashed with marks from a huge shovel.',
+                category: 'Travelling'
+            },
+            {
+                id: 'travel-hidden-exits',
+                displayText: 'You have discovered X hidden exits.',
+                text: 'hidden exits.',
+                category: 'Travelling',
+                partialMatch: true
+            },
+
+            // Moria
+            {
+                id: 'moria-alone',
+                text: 'You have walked alone through the mines of Moria.',
+                category: 'Moria',
+                races: ['Man', 'Elf', 'Hobbit', 'Half-elf', 'Tarkhnarb Orc (Torc)', 'Zaugurz Orc (zorc)', 'Troll', 'Black Numenorean (BN)']
+            },
+            {
+                id: 'moria-complete',
+                text: 'You have made it through the mines of Moria.',
+                category: 'Moria',
+                races: ['Man', 'Elf', 'Hobbit', 'Half-elf', 'Tarkhnarb Orc (Torc)', 'Zaugurz Orc (zorc)', 'Troll', 'Black Numenorean (BN)']
+            },
+            {
+                id: 'moria-alone-dwarf',
+                text: 'You have walked alone through the mines of Khazad-dum.',
+                category: 'Moria',
+                races: ['Dwarf']
+            },
+            {
+                id: 'moria-complete-dwarf',
+                text: 'You have made it through the ancient mines of Khazad-dum.',
+                category: 'Moria',
+                races: ['Dwarf']
+            },
+
+            // Quests
+            {
+                id: 'quest-amon-othar',
+                text: 'You have explored the depths of the ancient dwarven tomb, Amon Othar.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-mystical-ring',
+                text: 'You have seen the dwarven burial chambers underneath the mystical stone ring.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-theddins-mines',
+                text: 'You have found your way through the spider-infested tunnels of Theddin\'s mines.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-nordri',
+                text: 'You have proven yourself worthy to learn how to prepare Nordri\'s soothing-draught potion.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-thror-remains',
+                text: 'You returned Thror\'s remains, once lost in Khazad-dûm, to Thorin.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-vig',
+                text: 'You provided just the right kind of wood to Vig the smelter.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-cocooned',
+                text: 'You have been cocooned.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-stag-antlers',
+                text: 'You brought the antlers of the noble stag to an elven trapper.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-dark-green-moss',
+                text: 'You fetched some dark-green moss to a dwarven dye-maker.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-dye-58',
+                text: 'You fetched a jug of dye, formula no. 58 (forest green), for an elven weaver.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-alderon',
+                text: 'You have delivered many letters from and to Aldereon, and learnt the secret of preparing walking potions.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-dwarven-tomb',
+                text: 'You have received the key to an ancient dwarven home near Grey Havens.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-elven-chief',
+                text: 'You have successfully returned the stolen barrel of wine to the elven chief.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-valinor',
+                text: 'You have sailed the Straight Road and set foot on the Undying Lands.',
+                category: 'Quests',
+                races: ['Man', 'Elf', 'Hobbit', 'Half-elf', 'Dwarf']
+            },
+            {
+                id: 'quest-focus',
+                text: 'You have extracted matter from the Ainulindalë, and created your focus.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-filatior',
+                text: 'You have helped Filatior to destroy evil beings.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-maelton',
+                text: 'You travelled all the way to Bree and found Maelton\'s cousin.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-black-hill-smith-1',
+                text: 'You aided the blacksmith\'s apprentice in Black Hill village by bringing him ore.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-black-hill-smith-2',
+                text: 'You delivered iron rails to a Black Hill miner, helping him complete his railing project.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-hunter-1',
+                text: 'You aided the hunter in the Tower Hills with his slithering snake problem.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-hunter-2',
+                text: 'You aided the hunter in the Tower Hills by cleaning out a rat infestation.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-hunter-3',
+                text: 'You aided the hunter in the Tower Hills by keeping the bandits of the Tower Hills at bay.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-adventurer',
+                text: 'You aided Leonard in following his dream to become an adventurer.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-ranger-1',
+                text: 'You climbed to high heights.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-ranger-2',
+                text: 'You swam in murky water.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-pony-breeder',
+                text: 'You helped the pony breeder in the Tower Hills with his wolf problem.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-herbalist',
+                text: 'You aided the herbalist in Black Hill village by bringing him three rare plants.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-doll',
+                text: 'You found Ellie\'s doll and returned it to her.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-palantir',
+                text: 'You have looked in the palantir of Elostirion.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-lonely-giant',
+                text: 'You befriended the lonely giant and visited his home in the Hills of Faraway.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-shopkeeper',
+                text: 'You found the lost daughter of a Shire shopkeeper and brought her home safely.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-entwives',
+                text: 'You have escorted Harle all the way from the Shire to the depths of Fangorn, to bring the evidence about the entwives to Treebeard.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-black-wolves',
+                text: 'You battled the great black wolves during the fell winter.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-tanner',
+                displayText: 'You helped the old tanner of the Woody End create four varieties of leather for a total of X pieces.',
+                text: 'You helped the old tanner of the Woody End create four varieties of leather for a total of',
+                category: 'Quests',
+                partialMatch: true,
+            },
+            {
+                id: 'quest-festive-hobbit',
+                text: 'You slew a festive hobbit in the Shire and cancelled his party.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-plump-hobbit',
+                text: 'You got a pony for helping the plump hobbit learn how to bake dumplings.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-bree-citizen',
+                text: 'You have discovered a buried treasure.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-weaponsmith',
+                text: 'You recovered the antique dagger sought by the Bree weaponsmith.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-travelling',
+                text: 'You travelled far and wide to prove yourself worthy to the Dúnadan ranger.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-black-dagger',
+                text: 'You have dealt with the worst robbers of Fornost and visited their secret hide-out.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-tom-bombadil',
+                text: 'Hey dol! Merry dol! Ring a dong dillo! Tom Bombadil has rescued you from the troubles.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-aging-potion',
+                text: 'Boldly and stupidly, you drank an aging potion prepared by the dubious alchemist of Fornost.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-angrim',
+                text: 'You have aided Angrim\'s ghost in fulfilling his oath.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-wine-merchant',
+                text: 'You warned the Fornost barman to be wary of the crooked wine merchant.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-baker',
+                text: 'You have helped the baker in Bree by delivering him meat for his meat pies.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-beriagon-1',
+                text: 'You helped the Bree-land by putting down a troublesome boar.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-beriagon-2',
+                text: 'You sought out and killed the leader of a dangerous pack of wolves.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-beriagon-3',
+                text: 'You aided the Bree-land by killing a wounded, and dangerous bear.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-master-tanner',
+                text: 'You assisted the Bree tanner in creating a fur cloak with a silvery streak.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-fletcher',
+                text: 'The skilled fletcher in Bree has given you one quiver of leaf-shaped arrows.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-clint',
+                text: 'You were nice to Clint the Dwarf and recovered his axe.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-elven-scout',
+                text: 'You delivered to Elrond a letter from his scouts with important information about the movements of orc forces.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-tethel',
+                text: 'You have returned the lost tome to Quenairë.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-warrens-hobbit',
+                text: 'You rescued a Stoor hobbit from the slave pit in the troll warrens and helped him get home.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-brolg',
+                text: 'You braved darkness by unravelling the secrets of the orkish battle-standard.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-heirloom',
+                text: 'You returned a precious heirloom of the Golden Wood to the elven trader.',
+                category: 'Quests'
+            },
+            {
+                // TODO: this one is weird
+                id: 'quest-elven-chests',
+                text: 'You have unlocked X ornate elven chests and discovered all X different locations.',
+                category: 'Quests',
+                isCounter: true,
+            },
+            {
+                id: 'quest-snow-dig',
+                text: 'You frantically dug around in the snow of the Misty Mountains.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-huge-shovel',
+                text: 'You were given the huge shovel by Khuzur the Olog-hai.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-goblin-reminder',
+                text: 'You reminded the goblins of the Misty Mountains to obey the Lord of Dol Guldur.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-duinhir',
+                text: 'You rescued Duinhir of Blackroot Vale from captivity in a troll cave.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-kraksh',
+                text: 'Kraksh (Missing Achievement, Torc, Kraksh\'s Fangorn Quest)',
+                category: 'Quests',
+                races: ['Tarkhnarb Orc (Torc)']
+            },
+            {
+                id: 'quest-orkish-loremaster',
+                text: 'You brought the cold remnants of a whiteskin to the orkish loremaster, and got a powerful horn as reward.',
+                category: 'Quests',
+                races: ['Tarkhnarb Orc (Torc)']
+            },
+            {
+                id: 'quest-great-goblin',
+                text: 'You intercepted an important letter for Elrond from his scouts and delivered it to the Great Goblin.',
+                category: 'Quests',
+                races: ['Tarkhnarb Orc (Torc)']
+            },
+            {
+                id: 'quest-bulgo',
+                text: 'You brought Bulgōtha a scalp of an enemy of the Zaugurz.',
+                category: 'Quests',
+                races: ['Zaugurz Orc (zorc)']
+            },
+            {
+                id: 'quest-eoghha',
+                text: 'You paid Eoghha for his services to find smoke among the Misty Mountains.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-amanrandil',
+                text: 'You retrieved the diary of Amanrandil\'s emissary, who perished on the way from Isengard.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-haldin',
+                text: 'You brought Haldin the Marshal the spear of the Dunlending chieftain Broghha.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-tharbad-thief',
+                text: 'Following the thief\'s advice, you found the lost key in Tharbad, and managed to enter to the attic above the warehouse.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-jewelled-ring',
+                text: 'You have forged a jewelled ring.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-overseer',
+                text: 'You helped the dwarven overseer of Eregion craft a massive dwarven waraxe.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-osbert',
+                text: 'You killed Osbert and avenged the sister of the Tharbad Illusionist.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-beechbone',
+                text: 'You found and returned the lost bowl of Beechbone the Ent.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-leaf-cake',
+                text: 'You have awakened a drowsy ent in Fangorn, and learnt how to prepare leaf-cake to cure the flu.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-orkish-axe',
+                text: 'You helped an Ent by removing an orc axe from its back.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-treebeard',
+                text: 'You have aided Treebeard in cleansing Fangorn.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-jeraton',
+                text: 'You obtained a new wood axe for woodcutter Jeraton, so that he can make a living.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-white-stag',
+                text: 'You chased the white stag till the end of his run through the woods of Lorien.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-misty-hithlain',
+                text: 'You found a misty hithlain plant and brought it to Cirel.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-dagnir',
+                text: 'You freed the spirit of Dagnir the Man.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-enidale',
+                text: 'You returned to the ghost of Enidale the ring of his people.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-anarwen',
+                text: 'You helped Anarwen to release the evil spirit that had crept under the roots of the Golden Wood.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-elven-key',
+                text: 'You have acquired a fixed leaf-shaped key, made of shimmering metal. It must be important!',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-annariel',
+                text: 'You have rescued Annariel Tingliwinde from captivity.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-lorien-entrance',
+                text: 'You have been granted an annual entrance to Lórien.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-tauriel',
+                text: 'You brought an orkish bow to Taurion, who put the soul of the dead tree to rest.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-witch-king',
+                text: 'You have been drawn into the dark haze of Galadriel\'s mirror. There, you fought your way through the forest area and battled the undead in the Citadel\'s keep.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-coubhel',
+                text: 'You helped the Coubhel solve the mystery of the man sneaking around Lórien\'s borders.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-offa',
+                text: 'You assisted Offa the scout in dispatching the Lórien elf who was stalking him.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-lazrria',
+                text: 'You gave X items from the enemy to Lazrria that were found in the vicinity.',
+                category: 'Quests',
+                races: ['Black Numenorean (BN)', 'Tarkhnarb Orc (Torc)', 'Troll'],
+                isCounter: true
+            },
+            {
+                id: 'quest-narv',
+                text: 'You avenged the death of Narv the Beorning\'s wife and returned her ring to him.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-buttercup',
+                text: 'You recovered Buttercup, the favourite cow of Beorning farmer Ocher.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-elven-scout-dagger',
+                text: 'You retrieved the dagger lost by one of Elrond\'s scouts in a goblin attack near the Anduin.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-twins',
+                text: 'You rescued the twins of an Anduin Vale farmer from the Numenorean sorcerer Nagash.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-seeing-stone',
+                text: 'You contributed the Seeing Stone of Amon-Sul to the library of Azra-Zaira.',
+                category: 'Quests',
+                races: ['Black Numenorean (BN)', 'Tarkhnarb Orc (Torc)', 'Troll']
+            },
+            {
+                id: 'quest-niuldor',
+                text: 'You helped Niuldor the botanist to prepare a cure disease potion.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-beorn',
+                text: 'You assisted Beorn in defeating the warg riders of Anduin Vale.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-mill',
+                text: 'You fixed the old hobbit mill on the hillside near Honburg.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-hag',
+                text: 'You have brought black powder to the Old Hag of Ingrove, and for whatever reason received a love potion as the payment.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-nagash',
+                text: 'You brought a sacrificial goblet to the Nśmenórean sorcerer Nagash.',
+                category: 'Quests',
+                races: ['Tarkhnarb Orc (Torc)']
+            },
+            {
+                id: 'quest-frycha',
+                text: 'You slew the spider Frychra in her lair, deep in the forest of Mirkwood.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-oakscar',
+                text: 'You brought Oakscar the gnarled ent the objects he desired.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-rahku-rescue',
+                text: 'You rescued a wood elf from the lair of Rahku.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-rahku-climb',
+                text: 'Rahku the Mountain Troll accepted to teach you how to climb like a spider!',
+                category: 'Quests',
+                races: ['Troll']
+            },
+            {
+                id: 'quest-durbuk-hai',
+                text: 'You\'ve slain all of the Durbūk-hai commanders in Emyn-nu-Fuin.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-gwathion',
+                text: 'You found Gwathion\'s lost equipment.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-vurgl',
+                text: 'You killed Vurgl and brought his severed head to Kral.',
+                category: 'Quests',
+                races: ['Zaugurz Orc (zorc)']
+            },
+            {
+                id: 'quest-balrog',
+                text: 'You have slain Durin\'s Bane, the Balrog of Moria!',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-moria-depths',
+                text: 'You have ventured into the deepest depths of Moria.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-moria-gate',
+                text: 'You have found and read the magical runes etched on the west gate of Moria.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-troll-mother',
+                text: 'You lent a hand to the sad troll mother.',
+                category: 'Quests',
+                races: ['Troll']
+            },
+            {
+                id: 'quest-adragor',
+                text: 'You earned Adrāgor\'s trust and became a valued ally of the Morgundul.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-dolion',
+                text: 'You provided Dolion with evidence that the druidess, Silwiel, had become corrupted.',
+                category: 'Quests'
+            },
+            {
+                id: 'quest-dark-oath',
+                text: 'You have taken the dark oath and succumbed to the Dark Lord.',
+                category: 'Quests',
+                races: ['Black Numenorean (BN)']
+            },
+
+            // Tower defending
+            {
+                id: 'tower-dunland',
+                text: 'defended the Dunland Outpost from the enemies till help could arrive',
+                category: 'Tower defending'
+            },
+            {
+                id: 'tower-last-bridge',
+                text: 'defended the fortress at the Last Bridge from the enemies till help could arrive',
+                category: 'Tower defending'
+            },
+            {
+                id: 'tower-dark',
+                text: 'defended the Dark Tower in the Misty Mountains from the enemies till help could arrive',
+                category: 'Tower defending'
+            },
+            {
+                id: 'tower-abr',
+                text: 'defended the Tower on the Ancient Broken Road from the enemies till help could arrive',
+                category: 'Tower defending'
+            },
+            {
+                id: 'tower-warrens',
+                text: 'defended the tower above the Troll Warrens from the enemies till help could arrive',
+                category: 'Tower defending'
+            },
+            {
+                id: 'tower-hidden',
+                text: 'defended the Hidden Outpost near the Ford of Bruinen from the enemies till help could arrive',
+                category: 'Tower defending'
+            },
+            {
+                id: 'tower-vale',
+                text: 'defended the outpost in the Vale of Anduin from the enemies till help could arrive',
+                category: 'Tower defending'
+            },
+            {
+                id: 'tower-abr-camp',
+                text: 'defended the camp along the Ancient Broken Road from the enemies till help could arrive',
+                category: 'Tower defending'
+            },
+            {
+                id: 'tower-lorien',
+                text: 'defended the Lórien Outpost on the bank of the River Anduin from the enemies till help could arrive',
+                category: 'Tower defending'
+            },
+            {
+                id: 'tower-vale-fortress',
+                text: 'defended the old fortress in the Anduin Vale from the enemies till help could arrive',
+                category: 'Tower defending'
+            }
+        ];
+
+        // DOM Elements
+        const raceSelect = document.getElementById('race');
+        const achievementsTextarea = document.getElementById('achievements');
+        const parseButton = document.getElementById('parseButton');
+        const categoriesContainer = document.getElementById('categories');
+        const progressFill = document.querySelector('.progress-fill');
+        const progressText = document.getElementById('progressText');
+
+        // State
+        let userProgress = null;
+
+        // Event Listeners
+        raceSelect.addEventListener('change', updateParseButton);
+        achievementsTextarea.addEventListener('input', updateParseButton);
+
+        function updateParseButton() {
+            parseButton.disabled = !raceSelect.value || !achievementsTextarea.value;
+        }
+
+        parseButton.addEventListener('click', parseAchievements);
+
+        function parseAchievements() {
+            const race = raceSelect.value;
+            const lines = achievementsTextarea.value.split('\n').map(line => line.trim()).filter(line => line);
+            const progress = [];
+
+            // Join split achievements
+            const joinedLines = [];
+            let currentLine = '';
+            
+            lines.forEach((line, index) => {
+                // If this line doesn't start with "You" and the previous line exists,
+                // it's likely a continuation of the previous achievement
+                if (index > 0 
+                    && !(
+                        line.startsWith('You') 
+                        || line.startsWith("Hey") 
+                        || line.startsWith("Boldly")
+                        || line.startsWith("Following")
+                        || line.startsWith("Through")
+                        || line.startsWith("Whatever")
+                        || line.startsWith("Advanced")
+                        || line.startsWith("When")
+                    ) 
+                    && currentLine) {
+                    currentLine += ' ' + line;
+                } else {
+                    // If we have a previous line, add it to joinedLines
+                    if (currentLine) {
+                        joinedLines.push(currentLine);
+                    }
+                    currentLine = line;
+                }
+            });
+            
+            // Add the last line if it exists
+            if (currentLine) {
+                joinedLines.push(currentLine);
+            }
+
+            // First pass: collect all completed achievements
+            joinedLines.forEach(line => {
+                // For tower defending achievements and others tagged with 'partialMatch',
+                // we need to check if the line contains the achievement text
+                // regardless of the prefix (Once, Twice, etc.)
+                const achievement = achievements.find(a => {
+                    if (a.category === 'Tower defending' || a.partialMatch) {
+                        return line.includes(a.text);
+                    }
+                    return line.includes(a.text);
+                });
+
+                if (achievement) {
+                    if (achievement.isCounter) {
+                        const match = line.match(/\d+/);
+                        if (match) {
+                            progress.push({
+                                achievementId: achievement.id,
+                                completed: true,
+                                counterValue: parseInt(match[0])
+                            });
+                        }
+                    } else {
+                        progress.push({
+                            achievementId: achievement.id,
+                            completed: true
+                        });
+                    }
+                }
+            });
+
+            // Second pass: handle sequential achievements
+            const sequentialCategories = new Set(
+                achievements
+                    .filter(a => a.sequence)
+                    .map(a => a.category)
+            );
+
+            sequentialCategories.forEach(category => {
+                const categoryAchievements = achievements
+                    .filter(a => a.category === category && a.sequence)
+                    .sort((a, b) => b.sequence - a.sequence); // Sort by sequence in descending order
+
+                // Find the highest completed achievement in this category
+                const highestCompleted = categoryAchievements.find(a => 
+                    progress.some(p => p.achievementId === a.id)
+                );
+
+                if (highestCompleted) {
+                    // Add all lower sequence achievements as completed
+                    categoryAchievements
+                        .filter(a => a.sequence < highestCompleted.sequence)
+                        .forEach(a => {
+                            if (!progress.some(p => p.achievementId === a.id)) {
+                                progress.push({
+                                    achievementId: a.id,
+                                    completed: true
+                                });
+                            }
+                        });
+                }
+            });
+
+            userProgress = {
+                race,
+                achievements: progress
+            };
+
+            updateUI();
+        }
+
+        function updateUI() {
+            if (!userProgress) return;
+
+            // Update overall progress
+            const availableAchievements = achievements.filter(a => 
+                !a.races || a.races.includes(userProgress.race)
+            );
+            const completed = availableAchievements.filter(a => 
+                userProgress.achievements.some(p => p.achievementId === a.id)
+            ).length;
+
+            const percentage = (completed / availableAchievements.length) * 100;
+            progressFill.style.width = `${percentage}%`;
+            progressText.textContent = `${completed}/${availableAchievements.length} achievements`;
+
+            // Update categories
+            const categories = Array.from(new Set(achievements.map(a => a.category)));
+            categoriesContainer.innerHTML = '';
+
+            categories.forEach(category => {
+                const categoryAchievements = achievements.filter(a => a.category === category);
+                const availableCategoryAchievements = categoryAchievements.filter(a => 
+                    !a.races || a.races.includes(userProgress.race)
+                );
+                const categoryCompleted = availableCategoryAchievements.filter(a => 
+                    userProgress.achievements.some(p => p.achievementId === a.id)
+                ).length;
+
+                const categoryElement = document.createElement('div');
+                categoryElement.className = 'category';
+                categoryElement.innerHTML = `
+                    <div class="category-header">
+                        <span>${category} (${categoryCompleted}/${availableCategoryAchievements.length})</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="category-content">
+                        ${availableCategoryAchievements
+                            .map(a => {
+                                const progress = userProgress.achievements.find(p => p.achievementId === a.id);
+                                return `
+                                    <div class="achievement ${progress ? 'completed' : ''}">
+                                        ${a.displayText || a.text}
+                                        ${progress?.counterValue !== undefined ? 
+                                            `<span class="counter">(${progress.counterValue})</span>` : ''}
+                                    </div>
+                                `;
+                            })
+                            .join('')}
+                    </div>
+                `;
+
+                const header = categoryElement.querySelector('.category-header');
+                const content = categoryElement.querySelector('.category-content');
+                const arrow = header.querySelector('span:last-child');
+
+                header.addEventListener('click', () => {
+                    const isExpanded = content.style.display === 'block';
+                    content.style.display = isExpanded ? 'none' : 'block';
+                    arrow.textContent = isExpanded ? '▼' : '▲';
+                });
+
+                categoriesContainer.appendChild(categoryElement);
+            });
+        }
+    </script>
 </body>
-</html>
+</html> 
