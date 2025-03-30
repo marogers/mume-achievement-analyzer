@@ -632,6 +632,24 @@
                 races: ['Dwarf']
             },
 
+            // Elven Chests
+            {
+                id: 'elven-chest-1',
+                displayText: 'You have unlocked X ornate elven chests.',
+                text: 'ornate elven chest',
+                category: 'Elven Chests',
+                partialMatch: true,
+                sequence: 1,
+            },
+            {
+                id: 'elven-chest-2',
+                displayText: 'You have unlocked X ornate elven chests and discovered all X different locations.',
+                text: 'ornate elven chests and discovered all',
+                category: 'Elven Chests',
+                partialMatch: true,
+                sequence: 2,
+            },
+
             // Quests
             {
                 id: 'quest-amon-othar',
@@ -915,13 +933,6 @@
                 id: 'quest-heirloom',
                 text: 'You returned a precious heirloom of the Golden Wood to the elven trader.',
                 category: 'Quests'
-            },
-            {
-                // TODO: this one is weird
-                id: 'quest-elven-chests',
-                text: 'You have unlocked X ornate elven chests and discovered all X different locations.',
-                category: 'Quests',
-                isCounter: true,
             },
             {
                 id: 'quest-snow-dig',
@@ -1224,53 +1235,71 @@
             // Tower defending
             {
                 id: 'tower-dunland',
+                displayText: 'Defended the Dunland Outpost from the enemies till help could arrive.',
                 text: 'defended the Dunland Outpost from the enemies till help could arrive',
                 category: 'Tower defending'
             },
             {
                 id: 'tower-last-bridge',
+                displayText: 'Defended the fortress at the Last Bridge from the enemies till help could arrive.',
                 text: 'defended the fortress at the Last Bridge from the enemies till help could arrive',
                 category: 'Tower defending'
             },
             {
                 id: 'tower-dark',
+                displayText: 'Defended the Dark Tower in the Misty Mountains from the enemies till help could arrive.',
                 text: 'defended the Dark Tower in the Misty Mountains from the enemies till help could arrive',
-                category: 'Tower defending'
+                category: 'Tower defending',
+                partialMatch: true,
             },
             {
                 id: 'tower-abr',
+                displayText: 'Defended the Tower on the Ancient Broken Road from the enemies till help could arrive.',
                 text: 'defended the Tower on the Ancient Broken Road from the enemies till help could arrive',
-                category: 'Tower defending'
+                category: 'Tower defending',
+                partialMatch: true,
             },
             {
                 id: 'tower-warrens',
+                displayText: 'Defended the tower above the Troll Warrens from the enemies till help could arrive.',
                 text: 'defended the tower above the Troll Warrens from the enemies till help could arrive',
-                category: 'Tower defending'
+                category: 'Tower defending',
+                partialMatch: true,
             },
             {
                 id: 'tower-hidden',
+                displayText: 'Defended the Hidden Outpost near the Ford of Bruinen from the enemies till help could arrive.',
                 text: 'defended the Hidden Outpost near the Ford of Bruinen from the enemies till help could arrive',
-                category: 'Tower defending'
+                category: 'Tower defending',
+                partialMatch: true,
             },
             {
                 id: 'tower-vale',
+                displayText: 'Defended the outpost in the Vale of Anduin from the enemies till help could arrive.',
                 text: 'defended the outpost in the Vale of Anduin from the enemies till help could arrive',
-                category: 'Tower defending'
+                category: 'Tower defending',
+                partialMatch: true,
             },
             {
                 id: 'tower-abr-camp',
+                displayText: 'Defended the camp along the Ancient Broken Road from the enemies till help could arrive.',
                 text: 'defended the camp along the Ancient Broken Road from the enemies till help could arrive',
-                category: 'Tower defending'
+                category: 'Tower defending',
+                partialMatch: true,
             },
             {
                 id: 'tower-lorien',
+                displayText: 'Defended the Lórien Outpost on the bank of the River Anduin from the enemies till help could arrive.',
                 text: 'defended the Lórien Outpost on the bank of the River Anduin from the enemies till help could arrive',
-                category: 'Tower defending'
+                category: 'Tower defending',
+                partialMatch: true,
             },
             {
                 id: 'tower-vale-fortress',
+                displayText: 'Defended the old fortress in the Anduin Vale from the enemies till help could arrive.',
                 text: 'defended the old fortress in the Anduin Vale from the enemies till help could arrive',
-                category: 'Tower defending'
+                category: 'Tower defending',
+                partialMatch: true,
             }
         ];
 
@@ -1297,52 +1326,16 @@
 
         function parseAchievements() {
             const race = raceSelect.value;
-            const lines = achievementsTextarea.value.split('\n').map(line => line.trim()).filter(line => line);
+            // Parse the incoming achievements. Give grace to the MUME client output chopping lines to 80 characters.
+            const lines = achievementsTextarea.value.replace(/\n/g, ' ').replace(/(?<!no)\.\s/g, '.. ').split(/(?<!no)\.\s/g).map(line => line.trim()).filter(line => line);
             const progress = [];
 
-            // Join split achievements
-            const joinedLines = [];
-            let currentLine = '';
-            
-            lines.forEach((line, index) => {
-                // If this line doesn't start with "You" and the previous line exists,
-                // it's likely a continuation of the previous achievement
-                if (index > 0 
-                    && !(
-                        line.startsWith('You') 
-                        || line.startsWith("Hey") 
-                        || line.startsWith("Boldly")
-                        || line.startsWith("Following")
-                        || line.startsWith("Through")
-                        || line.startsWith("Whatever")
-                        || line.startsWith("Advanced")
-                        || line.startsWith("When")
-                    ) 
-                    && currentLine) {
-                    currentLine += ' ' + line;
-                } else {
-                    // If we have a previous line, add it to joinedLines
-                    if (currentLine) {
-                        joinedLines.push(currentLine);
-                    }
-                    currentLine = line;
-                }
-            });
-            
-            // Add the last line if it exists
-            if (currentLine) {
-                joinedLines.push(currentLine);
-            }
-
             // First pass: collect all completed achievements
-            joinedLines.forEach(line => {
-                // For tower defending achievements and others tagged with 'partialMatch',
+            lines.forEach(line => {
+                // For achievements tagged with 'partialMatch',
                 // we need to check if the line contains the achievement text
                 // regardless of the prefix (Once, Twice, etc.)
                 const achievement = achievements.find(a => {
-                    if (a.category === 'Tower defending' || a.partialMatch) {
-                        return line.includes(a.text);
-                    }
                     return line.includes(a.text);
                 });
 
